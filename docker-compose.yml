@@ -1,0 +1,25 @@
+services:
+  prod:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile_prod
+    ports:
+      - "8000:5000"
+    env_file:
+      - .env
+    restart: always
+    depends_on:
+      - database_prod
+
+  database_prod:
+    image: mysql:9.5.0
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data_prod:/var/lib/mysql
+    env_file:
+      - .env
+    restart: always
+
+volumes:
+  db_data_prod:
