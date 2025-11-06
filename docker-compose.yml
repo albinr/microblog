@@ -11,6 +11,21 @@ services:
     depends_on:
       - database_prod
 
+  test:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile_test
+    ports:
+      - "8001:5000"
+    volumes:
+      - ./app:/home/microblog/app
+      - ./tests:/home/microblog/tests
+    env_file:
+      - .env
+    restart: no
+    depends_on:
+      - database_test
+
   database_prod:
     image: mysql:9.5.0
     ports:
@@ -20,6 +35,17 @@ services:
     env_file:
       - .env
     restart: always
+  
+  database_test:
+    image: mysql:9.5.0
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data_test:/var/lib/mysql
+    env_file:
+      - .env
+    restart: no
 
 volumes:
   db_data_prod:
+  db_data_test:
