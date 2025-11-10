@@ -1,0 +1,26 @@
+
+name: Run tests
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: copy env
+      run: |
+        cp .env.example .env
+
+    - name: Run tests from docker file
+      run: |
+        docker compose up --abort-on-container-exit test
