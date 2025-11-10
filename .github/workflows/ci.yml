@@ -1,0 +1,30 @@
+name: Run tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy env
+        run: cp .env.example .env
+
+      - name: Build images
+        run: docker compose build test
+
+      - name: Run tests (fail on test failure)
+        run: docker compose up --abort-on-container-exit test
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v
