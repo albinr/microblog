@@ -65,18 +65,30 @@ class User(UserMixin, db.Model):
         return url
 
     def follow(self, user):
+        """
+        Follow user if not already following
+        """
         if not self.is_following(user):
             self.followed.append(user)
 
     def unfollow(self, user):
+        """
+        Unfollow user if following
+        """
         if self.is_following(user):
             self.followed.remove(user)
 
     def is_following(self, user):
+        """
+        Return if this user is following input user
+        """
         return self.followed.filter(
             followers.c.followed_id == user.id).count() > 0
 
     def followed_posts(self):
+        """
+        Return posts of followed users and this user
+        """
         followed = Post.query.join(
             followers, (followers.c.followed_id == Post.user_id)).filter(
                 followers.c.follower_id == self.id)
