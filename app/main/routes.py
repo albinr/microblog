@@ -39,10 +39,9 @@ def index():
         flash('Your post is now live!')
         return redirect(url_for('main.index'))
 
-    posts = current_user.posts.all()
+    posts = current_user.followed_posts().all()
     return render_template("index.html", title='Home Page', form=form,
                            posts=posts)
-
 
 
 @bp.route('/explore')
