@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Ability for users to follow and unfollow other users on the blog
-
 ### Fixed
 
 ### Changed
@@ -18,9 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 
-## [1.1.1] - 2023-03-05 - (template)
+## [11.0.0] - 2025-11-12
 
 ### Added
+
+- Ability for users to follow and unfollow other users on the blog
 
 ### Fixed
 
