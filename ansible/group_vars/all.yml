@@ -11,7 +11,7 @@ admin_email: alry23@student.bth.se
 vmtags:
     StudentId: alry23
 
-pub_ssh_key_location: '~/.ssh/devops_azure.pub' # path to your public ssh key file
+pub_ssh_key_location: '/home/albin/.ssh/devops_azure.pub' # path to your public ssh key file
 
 
 server_user: "deploy"
