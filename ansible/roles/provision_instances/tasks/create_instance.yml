@@ -55,9 +55,9 @@
         managed_disk_type: Standard_LRS
         os_disk_size_gb: 30
         image:
-            offer: Debian-10
-            publisher: Debian
-            sku: 10
+            publisher: Canonical
+            offer: ubuntu-24_04-lts
+            sku: server
             version: latest
         tags:
             StudentId: "{{ vmtags.StudentId }}"
