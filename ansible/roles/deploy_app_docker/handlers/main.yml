@@ -1,0 +1,9 @@
+---
+# Handlers for deploy_app_docker role
+
+- name: restart app container
+  docker_container:
+    name: "{{ app_container_name }}"
+    state: started
+    restart: true
+  become: true

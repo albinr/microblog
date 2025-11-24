@@ -1,0 +1,56 @@
+---
+# Deploy app Docker role - handles pulling and running the microblog application container
+
+- name: Pull Docker image from Docker Hub
+  docker_image:
+    name: "{{ app_docker_image }}"
+    tag: "{{ app_docker_tag }}"
+    source: pull
+    state: present
+  become: true
+
+- name: Stop existing container if running
+  docker_container:
+    name: "{{ app_container_name }}"
+    image: "{{ app_docker_image }}:{{ app_docker_tag }}"
+    state: stopped
+  become: true
+  ignore_errors: true
+
+- name: Remove existing container
+  docker_container:
+    name: "{{ app_container_name }}"
+    state: absent
+  become: true
+  ignore_errors: true
+
+- name: Run microblog application container
+  docker_container:
+    name: "{{ app_container_name }}"
+    image: "{{ app_docker_image }}:{{ app_docker_tag }}"
+    state: started
+    restart_policy: always
+    ports:
+      - "{{ app_host_port }}:{{ app_container_port }}"
+    command: "{{ app_run_command }}"
+  become: true
+  notify:
+    - restart app container
+
+- name: Wait for application to start
+  wait_for:
+    host: "{{ ansible_default_ipv4.address }}"
+    port: "{{ app_host_port }}"
+    delay: 10
+    timeout: 60
+  become: true
+
+- name: Verify container is running
+  docker_container_info:
+    name: "{{ app_container_name }}"
+  register: container_info
+  become: true
+
+- name: Display container status
+  debug:
+    msg: "Container {{ app_container_name }} is {{ container_info.container.State.Status }}"
