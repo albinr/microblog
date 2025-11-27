@@ -3,7 +3,7 @@
 
 # Docker image configuration
 app_docker_image: albinr/microblog
-app_docker_tag: latest
+app_docker_tag: "{{ app_version | default('latest') }}"
 
 # Container configuration
 app_container_name: microblog-app
