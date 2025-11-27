@@ -1,0 +1,3 @@
+[static_app_servers]
+appserver1.marcusnahlin.tech ansible_user=deploy
+appserver2.marcusnahlin.tech ansible_user=deploy
