@@ -1,0 +1,58 @@
+---
+# Deploy db Docker role - handles pulling and running the microblog database container
+
+- name: Pull Docker image from Docker Hub
+  docker_image:
+    name: "{{ db_docker_image }}"
+    tag: "{{ db_docker_tag }}"
+    source: pull
+    state: present
+  become: true
+
+- name: Stop existing container if running
+  docker_container:
+    name: "{{ db_container_name }}"
+    image: "{{ db_docker_image }}:{{ db_docker_tag }}"
+    state: stopped
+  become: true
+  ignore_errors: true
+
+- name: Remove existing container
+  docker_container:
+    name: "{{ db_container_name }}"
+    state: absent
+  become: true
+  ignore_errors: true
+
+- name: Run MySQL container for microblog
+  community.docker.docker_container:
+    name: "{{ db_container_name }}"
+    image: "{{ db_docker_image }}:{{ db_docker_tag }}"
+    state: started
+    restart_policy: always
+    ports:
+      - "{{ db_host_port }}:{{ db_container_port }}"
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ db_root_password }}"
+      MYSQL_DATABASE: "{{ db_name }}"
+      MYSQL_USER: "{{ db_user }}"
+      MYSQL_PASSWORD: "{{ db_password }}"
+    recreate: yes
+
+# - name: Wait for database to start
+#   wait_for:
+#     host: "{{ ansible_default_ipv4.address }}"
+#     port: "{{ db_host_port }}"
+#     delay: 10
+#     timeout: 60
+#   become: true
+
+- name: Verify container is running
+  docker_container_info:
+    name: "{{ db_container_name }}"
+  register: container_info
+  become: true
+
+- name: Display container status
+  debug:
+    msg: "Container {{ db_container_name }} is {{ container_info.container.State.Status }}"
