@@ -26,3 +26,29 @@ def test_index_post(client, user_post_response, user_dict):
     assert b"This is my first post" in response.data
     assert b"Your post is now live" in response.data
     assert b"Submit" in response.data
+
+
+def test_version_route(client, monkeypatch):
+    """
+    Test version route returns JSON with version info
+    """
+    monkeypatch.delenv("APP_VERSION", raising=False)
+    response = client.get("/version")
+    assert response.status_code == 200
+    assert response.content_type == "application/json"
+
+    json_data = response.get_json()
+    assert "version" in json_data
+    assert json_data["version"] == "unknown"  # Default when APP_VERSION not set
+
+
+def test_version_route_with_app_version(client, monkeypatch):
+    """
+    Test version route with APP_VERSION environment variable set
+    """
+    monkeypatch.setenv("APP_VERSION", "v1.2.3")
+    response = client.get("/version")
+    assert response.status_code == 200
+
+    json_data = response.get_json()
+    assert json_data["version"] == "v1.2.3"
