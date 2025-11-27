@@ -30,6 +30,7 @@
         relative_name: "{{ relative_name.name }}"
         zone_name: "{{ domain_name }}"
         record_type: A
+        time_to_live: 60
         state: present
         records:
             - entry: "{{ output_ip_address.state.ip_address }}"
@@ -45,6 +46,7 @@
         relative_name: "{{ iname }}"
         zone_name: "{{ domain_name }}"
         record_type: A
+        time_to_live: 60
         state: present
         records:
             - entry: "{{ output_ip_address.state.ip_address }}"
