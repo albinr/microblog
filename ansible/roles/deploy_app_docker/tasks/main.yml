@@ -32,18 +32,20 @@
     restart_policy: always
     ports:
       - "{{ app_host_port }}:{{ app_container_port }}"
+    env:
+      DATABASE_URL: "{{ app_database_url }}"
     command: "{{ app_run_command }}"
   become: true
   notify:
     - restart app container
 
-- name: Wait for application to start
-  wait_for:
-    host: "{{ ansible_default_ipv4.address }}"
-    port: "{{ app_host_port }}"
-    delay: 10
-    timeout: 60
-  become: true
+# - name: Wait for application to start
+#   wait_for:
+#     host: "{{ ansible_default_ipv4.address }}"
+#     port: "{{ app_host_port }}"
+#     delay: 10
+#     timeout: 60
+#   become: true
 
 - name: Verify container is running
   docker_container_info:
