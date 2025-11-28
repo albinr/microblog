@@ -67,4 +67,4 @@
   delay: 5
   until: version_response.json.version == app_docker_tag
   become: true
-  when: verify_version | default(false)
+  when: verify_version | default(false) | bool
