@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Route to view current app version (/version)
-
 ### Fixed
 
 - Fix connection problems for users during rapid application updates
@@ -18,6 +16,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Removed
+
+
+## [11.1.0] - 2025-11-28
+
+### Added
+
+- Route to view current app version (/version)
+
+### Fixed
+
+### Changed
+
+### Removed
+
 
 
 ## [11.0.0] - 2025-11-12
