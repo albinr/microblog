@@ -1,0 +1,26 @@
+---
+# Handlers for Docker role
+
+- name: restart docker
+  systemd:
+    name: docker
+    state: restarted
+  become: true
+
+- name: start docker
+  systemd:
+    name: docker
+    state: started
+  become: true
+
+- name: stop docker
+  systemd:
+    name: docker
+    state: stopped
+  become: true
+
+- name: reload docker
+  systemd:
+    name: docker
+    daemon_reload: true
+  become: true

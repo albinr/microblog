@@ -1,0 +1,9 @@
+---
+# Handlers for deploy_db role
+
+- name: restart db container
+  docker_container:
+    name: "{{ db_container_name }}"
+    state: started
+    restart: true
+  become: true

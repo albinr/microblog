@@ -1,0 +1,9 @@
+---
+    -   hosts: static_app_servers
+        serial: 1
+        remote_user: "deploy"
+        become: yes
+        become_method: sudo
+        roles:
+            -   docker
+            -   deploy_app_docker

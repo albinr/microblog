@@ -1,0 +1,52 @@
+- name: Pull Docker image from Docker Hub
+  docker_image:
+    name: "{{ db_docker_image }}"
+    tag: "{{ db_docker_tag }}"
+    source: pull
+  become: true
+
+- name: Run MySQL container for microblog
+  community.docker.docker_container:
+    name: "{{ db_container_name }}"
+    image: "{{ db_docker_image }}:{{ db_docker_tag }}"
+    state: started
+    restart_policy: unless-stopped
+    ports:
+      - "{{ db_host_port }}:{{ db_container_port }}"
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ db_root_password }}"
+      MYSQL_DATABASE: "{{ db_name }}"
+      MYSQL_USER: "{{ db_user }}"
+      MYSQL_PASSWORD: "{{ db_password }}"
+    volumes:
+      - "{{ db_data_volume }}:/var/lib/mysql"
+    comparisons:
+      image: ignore
+      env: strict
+  register: mysql_container
+  become: true
+
+- name: Wait for MySQL to accept connections
+  ansible.builtin.command: >
+    docker exec {{ db_container_name }}
+    mysqladmin ping
+    -h127.0.0.1
+    -u root
+    --password={{ db_root_password | quote }}
+    --silent
+  register: mysql_ping
+  until: mysql_ping.rc == 0
+  retries: 60
+  delay: 5
+  when: mysql_container.changed | default(false)
+  become: true
+
+- name: Verify container is running
+  docker_container_info:
+    name: "{{ db_container_name }}"
+  register: container_info
+  become: true
+
+- name: Display container status
+  debug:
+    msg: "Container {{ db_container_name }} is {{ container_info.container.State.Status }}"

@@ -1,0 +1,23 @@
+---
+# Default variables for deploy_db role
+
+# Docker image configuration
+db_docker_image: mysql
+db_docker_tag: 8.0
+
+# Container configuration
+db_container_name: microblog-db
+db_host_port: 3306
+db_container_port: 3306
+
+# Database credentials and configuration
+db_name: microblog
+db_user: microblog
+db_password: microblog_password
+db_root_password: root_password
+
+# Container restart policy
+db_restart_policy: always
+
+# Data persistence
+db_data_volume: microblog-db-data

@@ -18,10 +18,25 @@
       state: stopped
     when: not letsencrypt_cert.stat.exists
 
+# Let's Encrypt certificate (may hit rate limits)
 -   name: Generate new certificate if one doesn't exist.
     when: not letsencrypt_cert.stat.exists
     command:
       cmd: "certbot certonly --standalone --noninteractive --expand --agree-tos --email {{ admin_email }} -d {{ domain_name }} -d www.{{ domain_name }}"
+    ignore_errors: true
+
+# Self-signed certificate (no rate limits, comment out Let's Encrypt task above to use this)
+# -   name: Generate self-signed certificate if one doesn't exist.
+#     when: not letsencrypt_cert.stat.exists
+#     shell: |
+#       mkdir -p /etc/letsencrypt/live/{{ domain_name }}
+#       openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+#         -keyout /etc/letsencrypt/live/{{ domain_name }}/privkey.pem \
+#         -out /etc/letsencrypt/live/{{ domain_name }}/cert.pem \
+#         -subj "/C=SE/ST=Blekinge/L=Karlskrona/O=BTH/CN={{ domain_name }}" \
+#         -addext "subjectAltName=DNS:{{ domain_name }},DNS:www.{{ domain_name }}"
+#       # Create fullchain.pem (required by nginx)
+#       cp /etc/letsencrypt/live/{{ domain_name }}/cert.pem /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem
 
 -   name: Remove default conf
     file:

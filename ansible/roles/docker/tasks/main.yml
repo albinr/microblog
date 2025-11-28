@@ -1,0 +1,87 @@
+---
+# Docker CE installation role tasks
+
+- name: Update apt package cache
+  apt:
+    update_cache: true
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  become: true
+
+- name: Install required packages for Docker repository
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+  become: true
+
+- name: Add Docker GPG key
+  apt_key:
+    url: "{{ docker_apt_key_url }}"
+    state: present
+  become: true
+
+- name: Add Docker repository
+  apt_repository:
+    repo: "{{ docker_apt_repository }}"
+    state: present
+  become: true
+
+- name: Update apt package cache after adding Docker repository
+  apt:
+    update_cache: true
+  become: true
+
+- name: Install Docker CE
+  apt:
+    name:
+      - "docker-ce={{ docker_ce_version }}"
+      - "docker-ce-cli={{ docker_ce_cli_version }}"
+      - "containerd.io={{ containerd_version }}"
+      - "docker-compose-plugin={{ docker_compose_plugin_version }}"
+    state: present
+  become: true
+  notify:
+    - restart docker
+  when: docker_ce_version != 'present'
+
+- name: Install Docker CE (latest versions)
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+    state: present
+  become: true
+  notify:
+    - restart docker
+  when: docker_ce_version == 'present'
+
+- name: Ensure Docker service is started and enabled
+  systemd:
+    name: docker
+    state: "{{ docker_service_state }}"
+    enabled: "{{ docker_service_enabled }}"
+  become: true
+
+- name: Add users to docker group
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  become: true
+  with_items: "{{ docker_users }}"
+  when: docker_users is defined and docker_users | length > 0
+
+- name: Verify Docker installation
+  command: docker --version
+  register: docker_version
+  changed_when: false
+
+- name: Display Docker version
+  debug:
+    msg: "Docker installed successfully: {{ docker_version.stdout }}"
