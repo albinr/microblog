@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Changed
+
+### Removed
+
+## [11.1.1] - 2025-11-28
+
+### Added
+
+### Fixed
+
 - Fix connection problems for users during rapid application updates
 
 ### Changed
@@ -29,7 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Removed
-
 
 
 ## [11.0.0] - 2025-11-12
