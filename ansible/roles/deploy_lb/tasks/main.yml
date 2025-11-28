@@ -22,7 +22,7 @@
 -   name: Generate new certificate if one doesn't exist.
     when: not letsencrypt_cert.stat.exists
     command:
-      cmd: "certbot certonly --standalone --noninteractive --expand --agree-tos --email {{ admin_email }} -d {{ domain_name }} -d www.{{ domain_name }} --test-cert"
+      cmd: "certbot certonly --standalone --noninteractive --expand --agree-tos --email {{ admin_email }} -d {{ domain_name }} -d www.{{ domain_name }}"
     ignore_errors: true
 
 # Self-signed certificate (no rate limits, comment out Let's Encrypt task above to use this)
