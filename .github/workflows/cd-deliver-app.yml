@@ -1,0 +1,37 @@
+name: Update live production apps to new version
+
+on:
+  push:
+    tags:
+    - 'v*.*.*'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to production servers
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v5
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install Ansible and dependencies
+        run: |
+          pip install -r requirements/deploy.txt
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Deploy application using Ansible
+        working-directory: ansible
+        run: |
+          ansible-playbook -i hosts_static deploy_app.yml \
+            -e app_version=${{ github.ref_name }}
+            -e verify_version=true
