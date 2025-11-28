@@ -34,7 +34,7 @@
       - "{{ app_host_port }}:{{ app_container_port }}"
     env:
       DATABASE_URL: "{{ app_database_url }}"
-      APP_VERSION: "{{ app_docker_tag }}"
+      APP_VERSION: "{{ app_version | default('') }}"
     command: "{{ app_run_command }}"
   become: true
   notify:
@@ -57,3 +57,14 @@
 - name: Display container status
   debug:
     msg: "Container {{ app_container_name }} is {{ container_info.container.State.Status }}"
+
+- name: Verify correct version is running
+  uri:
+    url: "http://{{ ansible_default_ipv4.address }}:{{ app_host_port }}/version"
+    return_content: yes
+  register: version_response
+  retries: 5
+  delay: 5
+  until: version_response.json.version == app_docker_tag
+  become: true
+  when: verify_version | default(false)
