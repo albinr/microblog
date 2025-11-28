@@ -1,15 +1,17 @@
 name: Update live production apps to new version
 
 on:
-  push:
-    tags:
-    - 'v*.*.*'
+  workflow_run:
+    workflows: ["Publish Docker Image"]
+    types:
+      - completed
 
 permissions:
   contents: read
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Deploy to production servers
     runs-on: ubuntu-24.04
     permissions:
@@ -33,5 +35,5 @@ jobs:
         working-directory: ansible
         run: |
           ansible-playbook -i hosts_static deploy_app.yml \
-            -e app_version=${{ github.ref_name }}
+            -e app_version=${{ github.ref_name }} \
             -e verify_version=true
