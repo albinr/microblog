@@ -27,7 +27,7 @@ services:
       - database_test
 
   database_prod:
-    image: mysql:9.5.0
+    image: mysql:8.0
     ports:
       - "3306:3306"
     volumes:
@@ -37,7 +37,7 @@ services:
     restart: always
   
   database_test:
-    image: mysql:9.5.0
+    image: mysql:8.0
     ports:
       - "3307:3306"
     volumes:
