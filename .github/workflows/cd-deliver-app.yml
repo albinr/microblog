@@ -31,9 +31,13 @@ jobs:
         uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Get triggering tag
+        id: get_tag
+        run: |
+          echo "ref=$(jq -r .workflow_run.head_branch "$GITHUB_EVENT_PATH")" >> $GITHUB_OUTPUT
       - name: Deploy application using Ansible
         working-directory: ansible
         run: |
           ansible-playbook -i hosts_static deploy_app.yml \
-            -e app_version=${{ github.ref_name }} \
+            -e app_version=${{ steps.get_tag.outputs.ref }} \
             -e verify_version=true
