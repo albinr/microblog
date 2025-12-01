@@ -216,3 +216,10 @@ install-deploy:
 	${pip} install -r requirements/deploy.txt
 	${pip} install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements.txt
 	cd ansible && ansible-galaxy install -r requirements.yml
+
+
+
+# target: bandit              - Validate code security with Bandit
+.PHONY: bandit
+bandit:
+	@bandit -r app -ll
