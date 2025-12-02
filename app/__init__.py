@@ -4,6 +4,7 @@ Factory for application
 
 import os
 import logging
+import sentry_sdk
 from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask.logging import default_handler
@@ -13,8 +14,10 @@ from flask_login import LoginManager
 from flask_moment import Moment
 from flask_bootstrap import Bootstrap
 from app.config import ProdConfig, RequestFormatter
+from dotenv import load_dotenv
 
-
+basedir = os.path.abspath(os.path.dirname(__file__) +  "/..")
+load_dotenv(os.path.join(basedir, '.env'))
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -30,6 +33,31 @@ def create_app(config_class=ProdConfig):
     """
     Create flask app, init addons, blueprints and setup logging
     """
+
+    if os.environ.get("SENTRY_DSN"):
+        sentry_sdk.init(
+            dsn=os.environ.get("SENTRY_DSN"),
+            # Add data like request headers and IP for users,
+            # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+            send_default_pii=True,
+            # Enable sending logs to Sentry
+            enable_logs=True,
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for tracing.
+            traces_sample_rate=1.0,
+            # Set profile_session_sample_rate to 1.0 to profile 100%
+            # of profile sessions.
+            profile_session_sample_rate=1.0,
+            # Set profile_lifecycle to "trace" to automatically
+            # run the profiler on when there is an active transaction
+            profile_lifecycle="trace",
+        )
+        logging.info("Sentry initialized")
+        print("Sentry initialized")
+    else:
+        logging.warning("SENTRY_DSN not found, Sentry not initialized")
+        print("SENTRY_DSN not found, Sentry not initialized")
+
     app = Flask(__name__)
     app.config.from_object(config_class)
 
