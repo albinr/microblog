@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-FROM python:3.8-alpine3.16
+FROM python:3.11-alpine
 
 RUN <<-EOF
   apk add --no-cache make=4.3-r0
