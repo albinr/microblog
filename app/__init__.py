@@ -4,8 +4,8 @@ Factory for application
 
 import os
 import logging
-import sentry_sdk
 from logging.handlers import RotatingFileHandler
+import sentry_sdk
 from flask import Flask
 from flask.logging import default_handler
 from flask_sqlalchemy import SQLAlchemy
@@ -13,8 +13,8 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_moment import Moment
 from flask_bootstrap import Bootstrap
-from app.config import ProdConfig, RequestFormatter
 from dotenv import load_dotenv
+from app.config import ProdConfig, RequestFormatter
 
 basedir = os.path.abspath(os.path.dirname(__file__) +  "/..")
 load_dotenv(os.path.join(basedir, '.env'))
