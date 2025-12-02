@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Suppressed security warning about MD5 encryption
+
 ### Changed
 
 ### Removed
