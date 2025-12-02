@@ -223,3 +223,45 @@ install-deploy:
 .PHONY: bandit
 bandit:
 	@bandit -r app -ll
+
+
+
+TRIVY_IMAGE    ?= aquasec/trivy:latest
+MICROBLOG_IMAGE ?= microblog-local:latest
+REPO_DIR       ?= .
+
+
+# target: trivy-image                   - Scan docker-image for vulnerabilities, secrets and misconfigurations
+.PHONY: trivy-image
+trivy-image:
+	@docker build -f docker/Dockerfile_prod -t $(MICROBLOG_IMAGE) .
+	@docker run --rm \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v $(HOME)/.cache:/root/.cache/ \
+		$(TRIVY_IMAGE) image \
+		--scanners vuln,secret,misconfig \
+		--severity HIGH,CRITICAL \
+		--exit-code 1 \
+		--no-progress \
+		$(MICROBLOG_IMAGE)
+
+
+
+# target: trivy-repo                    - Scan entire repository (excludes .venv)
+.PHONY: trivy-repo
+trivy-repo:
+	@docker run --rm \
+		-v $(REPO_DIR):/repo \
+		-v $(HOME)/.cache:/root/.cache/ \
+		-w /repo \
+		$(TRIVY_IMAGE) fs \
+		--scanners vuln,secret,misconfig \
+		--severity HIGH,CRITICAL \
+		--exit-code 1 \
+		--no-progress \
+		--skip-dirs .venv,venv \
+		.
+
+# target: trivy-ci                  - Run both image and repo scans
+.PHONY: trivy-ci
+trivy-ci: trivy-image trivy-repo
