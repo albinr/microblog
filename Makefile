@@ -265,3 +265,14 @@ trivy-repo:
 # target: trivy-ci                  - Run both image and repo scans
 .PHONY: trivy-ci
 trivy-ci: trivy-image trivy-repo
+
+# target: dockle                  - Run Dockle on the production Dockerfile
+.PHONY: dockle
+dockle:
+	@docker build -f docker/Dockerfile_prod -t $(MICROBLOG_IMAGE) .
+	@docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+		goodwithtech/dockle:latest \
+		--ignore DKL-DI-0004 \
+		--ignore DKL-DI-0006 \
+		--exit-code 1 $(MICROBLOG_IMAGE)
+
