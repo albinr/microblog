@@ -3,7 +3,7 @@
 FROM python:3.11-alpine
 
 RUN <<-EOF
-  apk add --no-cache make=4.3-r0
+  apk add --no-cache make
   adduser -D microblog
 EOF
 
