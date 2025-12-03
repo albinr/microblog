@@ -1,0 +1,34 @@
+name: CI Verify Security
+
+on:
+  push:
+    branches:
+      - feature/ci-verify-security
+  workflow_dispatch:
+
+jobs:
+  security-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: |
+          make install-test
+
+      - name: Run Bandit
+        run: make bandit
+
+      - name: Run Trivy (image and repo)
+        run: |
+          make trivy-ci
+
+      - name: Run Dockle
+        run: |
+          make dockle
