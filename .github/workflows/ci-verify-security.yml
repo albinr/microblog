@@ -2,10 +2,8 @@ name: CI Verify Security
 
 on:
   push:
-    branches:
-      - feature/ci-verify-security
-  workflow_dispatch:
-
+    tags:
+    - 'v*.*.*'
 jobs:
   security-checks:
     runs-on: ubuntu-latest
