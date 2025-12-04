@@ -69,19 +69,37 @@
 -   name: flush handlers to restart SSH
     meta: flush_handlers # we cant do it later because after this we cant ssh as root
 
--   name: Only allow user to ssh
+-   name: Switch to new user for remaining tasks
+    set_fact:
+        ansible_user: "{{ server_user }}"
+        ansible_become: true
+
+-   name: Apply harder SSH config
+    copy:
+        mode: "644"
+        src: files/sshd_config
+        dest: /etc/ssh/sshd_config
+    become: true
+    notify: restart ssh
+
+-   name: Only allow new user to ssh
     lineinfile:
         path: /etc/ssh/sshd_config
         regexp: "^AllowUsers"
         line: "AllowUsers {{ server_user }}"
         state: present
-    # ignore_errors: yes
+    become: true
+    notify: restart ssh
+
+-   name: Final SSH restart with all restrictions
+    meta: flush_handlers
 
 -   name: Remove default user
-    remote_user: "{{ server_user }}"
     user:
-        name: azureuser
+        name: "{{ ansible_user }}"
         state: absent
-        force: yes
-        remove: yes
-    # ignore_errors: yes
+        force: true
+        remove: true
+    become: true
+    ignore_errors: true
+    when: ansible_user != server_user
