@@ -14,11 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Suppressed security warning about MD5 encryption
-- Updated production packages to newer versions to patch security issues
 
 ### Changed
 
 - Updated package versions due to security issues
+- Improved SSH security
+- Improved network security for servers
 
 ### Removed
 
