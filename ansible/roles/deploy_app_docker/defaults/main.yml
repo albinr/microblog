@@ -23,3 +23,4 @@ db_user: microblog
 db_password: microblog_password
 db_root_password: root_password
 app_database_url: "mysql+pymysql://{{ db_user }}:{{ db_password }}@{{ db_host }}:{{ db_port }}/{{ db_name }}"
+app_sentry_dsn: https://07c8f5be7a6a40c28c90ea99f944de93@o4510464713883648.ingest.de.sentry.io/4510464716898384
