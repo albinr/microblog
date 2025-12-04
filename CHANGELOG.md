@@ -23,6 +23,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [11.2.2] - 2025-12-04
+
+### Added
+
+- Integrated Sentry for error tracking and performance monitoring
+
+### Fixed
+
+- Suppressed security warning about MD5 encryption
+
+### Changed
+
+- Updated package versions due to security issues
+- Improved SSH security
+- Improved network security for servers
+
+### Removed
+
 ## [11.1.1] - 2025-11-28
 
 ### Added
