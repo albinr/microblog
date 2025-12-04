@@ -17,12 +17,12 @@
     add_host:
         name: "{{ item.name[0:-3] }}.{{ domain_name }}"
         groups:
-        - "{{ item.name[0:-3] }}" # instance name from provision_instances/vars/main.yml
-        - "{{ item.tags.Type }}" # instance type from provision_instances/vars/main.yml
+        - "{{ item.name[0:-3] }}"
+        - "{{ item.tags.Type }}"
         - devops
-        # the keys below are dynamic and can have any name and value. A way to add data to the host which can be read later
         iname: "{{ item.name[0:-3] }}"
         itype: "{{ item.tags.Type }}"
+        public_ip: "{{ item.tags.PublicIP }}"
     with_items: "{{ az_facts.vms }}"
     when: item.tags.PublicIP is defined and item.power_state == "running"
 

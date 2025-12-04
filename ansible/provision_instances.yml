@@ -11,15 +11,6 @@
         - include_tasks: roles/provision_instances/tasks/add_vms_as_hosts.yml
 
 
-
--   name: create security groups
-    hosts: local
-    gather_facts: False
-    roles: 
-        - security_groups
-
-
-
 -   name: create networks
     hosts: local
     gather_facts: False
@@ -27,6 +18,13 @@
         -   include_tasks: roles/provision_instances/tasks/vnet.yml
     collections:
         - azure.azcollection
+
+
+-   name: create security groups first
+    hosts: local
+    gather_facts: False
+    roles:
+        - security_groups
 
 
 # Here we utilize that we added each instance to hosts.
@@ -38,3 +36,14 @@
         - azure.azcollection
     roles:
         - provision_instances
+
+
+-   name: update security groups with VM IPs
+    hosts: local
+    serial: 1
+    gather_facts: False
+    vars:
+        update_with_ips: true
+    roles:
+        - gather_instances
+        - security_groups
