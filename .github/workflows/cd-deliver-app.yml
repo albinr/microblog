@@ -34,7 +34,29 @@ jobs:
       - name: Get triggering tag
         id: get_tag
         run: |
-          echo "ref=$(jq -r .workflow_run.head_branch "$GITHUB_EVENT_PATH")" >> $GITHUB_OUTPUT
+          echo "=== Debugging workflow_run event ==="
+          jq . "$GITHUB_EVENT_PATH"
+          echo "================================="
+          
+          # Check if the triggering workflow was started by a tag
+          TRIGGER_EVENT=$(jq -r '.workflow_run.triggering_actor.type // empty' "$GITHUB_EVENT_PATH")
+          HEAD_BRANCH=$(jq -r '.workflow_run.head_branch' "$GITHUB_EVENT_PATH")
+          HEAD_SHA=$(jq -r '.workflow_run.head_sha' "$GITHUB_EVENT_PATH")
+          
+          echo "Head branch: $HEAD_BRANCH"
+          echo "Head SHA: $HEAD_SHA"
+          
+          # Look for tags at this commit
+          git fetch --tags
+          TAG=$(git tag --points-at $HEAD_SHA | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+" | head -1)
+          
+          if [[ -n "$TAG" ]]; then
+            echo "Found version tag: $TAG"
+            echo "ref=$TAG" >> $GITHUB_OUTPUT
+          else
+            echo "No version tag found, using branch: $HEAD_BRANCH"
+            echo "ref=$HEAD_BRANCH" >> $GITHUB_OUTPUT
+          fi
       - name: Deploy application using Ansible
         working-directory: ansible
         run: |
