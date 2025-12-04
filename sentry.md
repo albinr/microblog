@@ -1,4 +1,5 @@
 # Teknisk studie - Sentry - alry23, mann23
+# Obs denna studie är inte helt färdig efter som kraven ändrades för kursmomentet!!
 ![sentry logo](./sentry_images/sentry-wordmark-dark-400x119.png)
 
 ## Vad är Sentry och vad gör det?
