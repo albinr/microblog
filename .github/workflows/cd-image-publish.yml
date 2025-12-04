@@ -17,6 +17,7 @@ jobs:
     needs: tests
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-24.04
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       packages: write
       contents: read
@@ -50,8 +51,8 @@ jobs:
           context: .
           file: ./docker/Dockerfile_prod
           push: true
-          tags: ${{ steps.get_tag.outputs.ref }}
-          labels: ${{ steps.get_tag.outputs.ref }}
+          tags: albinr/microblog:${{ steps.get_tag.outputs.ref }}
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v3
