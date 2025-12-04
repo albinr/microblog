@@ -7,6 +7,7 @@
     tag: "{{ app_docker_tag }}"
     source: pull
     state: present
+    force_source: true
   become: true
 
 - name: Stop existing container if running
