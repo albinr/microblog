@@ -1,5 +1,5 @@
 ---
--   name: Network Security Group
+-   name: Initial Security Groups (before VMs)
     azure_rm_securitygroup:
         resource_group: "{{ resource_group }}"
         name: "{{ group.name }}-sg"
@@ -7,7 +7,30 @@
         rules: "{{ group.port_rules }}"
         tags: "{{ vmtags }}"
         state: "{{ state }}"
-    loop: "{{ sg_groups }}"
+    loop: "{{ sg_groups_initial }}"
     loop_control: 
         loop_var: group
     delegate_to: 127.0.0.1
+    register: sg_result
+    retries: 3
+    delay: 5
+    until: sg_result is succeeded
+    when: sg_groups_initial is defined and (update_with_ips is not defined or not update_with_ips)
+
+-   name: Update Security Groups with VM IPs (after VMs)
+    azure_rm_securitygroup:
+        resource_group: "{{ resource_group }}"
+        name: "{{ group.name }}-sg"
+        purge_rules: yes
+        rules: "{{ group.port_rules }}"
+        tags: "{{ vmtags }}"
+        state: "{{ state }}"
+    loop: "{{ sg_groups_with_ips }}"
+    loop_control: 
+        loop_var: group
+    delegate_to: 127.0.0.1
+    register: sg_result_with_ips
+    retries: 3
+    delay: 5
+    until: sg_result_with_ips is succeeded
+    when: sg_groups_with_ips is defined and update_with_ips is defined and update_with_ips
