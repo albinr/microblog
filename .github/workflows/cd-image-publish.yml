@@ -1,9 +1,10 @@
 name: Publish Docker Image
 
 on:
-  push:
-    tags:
-    - 'v*.*.*'
+  workflow_run:
+    workflows: ["CI Verify Security"]
+    types:
+      - completed
 
 permissions:
   contents: read
@@ -37,6 +38,11 @@ jobs:
         with:
           images: albinr/microblog
 
+      - name: Get triggering tag
+        id: get_tag
+        run: |
+          echo "ref=$(jq -r .workflow_run.head_branch "$GITHUB_EVENT_PATH")" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image
         id: push
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
@@ -44,8 +50,8 @@ jobs:
           context: .
           file: ./docker/Dockerfile_prod
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.get_tag.outputs.ref }}
+          labels: ${{ steps.get_tag.outputs.ref }}
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v3
