@@ -11,9 +11,11 @@ scrape_configs:
   - job_name: 'flask'
     metrics_path: /metrics
     static_configs:
-      - targets: ['host.docker.internal:8000']
+{% for host in groups['appserver'] %}
+      - targets: ['{{ host }}:8000']
         labels:
-          instance: flask
+          instance: flask_{{ host.split('.')[0] }}
+{% endfor %}
 
 alerting:
   alertmanagers:

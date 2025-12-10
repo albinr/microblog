@@ -1,0 +1,22 @@
+---
+    -   hosts: monitoring
+        remote_user: "deploy"
+        become: yes
+        become_method: sudo
+        roles:
+            -   docker
+            -   deploy_monitoring
+        tasks:
+            -   name: create prometheus datasource
+                community.grafana.grafana_datasource:
+                    name: prometheus_auto
+                    ds_type: prometheus
+                    org_id: 1
+                    ds_url: http://prometheus:9090
+                    access: proxy
+                    tls_skip_verify: true # TODO: change when using self-signed certs to true
+                    validate_certs: false # TODO: change when using self-signed certs to false
+                    grafana_url: "https://{{domain_name}}/grafana"
+                    grafana_user: "{{ grafana_admin_user }}"
+                    grafana_password: "{{ grafana_admin_password }}"
+                    state: present

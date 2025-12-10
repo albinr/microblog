@@ -15,6 +15,10 @@ pub_ssh_key_location: 'keys/ssh-keys.pub'
 
 
 server_user: "deploy"
-server_user_pass: "DevOps2025!" 
+server_user_pass: "DevOps2025!"
 server_user_groups:
     -   sudo
+
+alertmanager_webhook_url: ""
+grafana_admin_user: ""
+grafana_admin_password: ""

@@ -56,6 +56,15 @@ sg_groups_initial:
             priority: 1002
             direction: Inbound
             source_address_prefix: '0.0.0.0/0'  # Temporary - will be updated later
+    -   name: monitoring
+        port_rules:
+        -   name: SSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 1001
+            direction: Inbound
+            source_address_prefix: '0.0.0.0/0'
 
 # Updated security groups with VM IP restrictions (created after VMs)
 sg_groups_with_ips:
@@ -75,6 +84,13 @@ sg_groups_with_ips:
             priority: 1002
             direction: Inbound
             source_address_prefix: '{{ hostvars[groups["loadbalancer"][0]]["public_ip"] }}/32'
+        -   name: METRICS
+            protocol: Tcp
+            destination_port_range: 8000
+            access: Allow
+            priority: 1003
+            direction: Inbound
+            source_address_prefix: '{{ hostvars[groups["monitoring"][0]]["public_ip"] }}/32'
     -   name: database
         port_rules:
         -   name: SSH
@@ -93,6 +109,21 @@ sg_groups_with_ips:
             source_address_prefix:
                 - "{{ hostvars[groups['appserver'][0]]['public_ip'] }}/32"
                 - "{{ hostvars[groups['appserver'][1]]['public_ip'] }}/32"
-
+    -   name: monitoring
+        port_rules:
+        -   name: SSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 1001
+            direction: Inbound
+            source_address_prefix: '0.0.0.0/0'
+        -   name: HTTP
+            protocol: Tcp
+            destination_port_range: 3000
+            access: Allow
+            priority: 1002
+            direction: Inbound
+            source_address_prefix: '{{ hostvars[groups["loadbalancer"][0]]["public_ip"] }}/32'
 
 sg_groups: "{{ sg_groups_initial }}"
