@@ -1,0 +1,59 @@
+---
+# Deploy app Docker role - handles pulling and running the microblog application container
+
+-   name: Copy docker compose file
+    copy:
+        mode: "644"
+        src: files/docker-compose-monitor.yml
+        dest: /home/{{ server_user }}/docker-compose-monitor.yml
+    become: true
+
+-   name: Copy prometheus config file
+    template:
+        mode: "644"
+        src: prometheus.yml.j2
+        dest: /home/{{ server_user }}/prometheus.yml
+    become: true
+
+-   name: Copy alert manager config template
+    template:
+        mode: "644"
+        src: alertmanager.yml.j2
+        dest: /home/{{ server_user }}/alertmanager.yml
+    become: true
+
+-   name: Copy alert manager rules file
+    copy:
+        mode: "644"
+        src: files/rules.yml
+        dest: /home/{{ server_user }}/rules.yml
+    become: true
+
+-   name: Copy grafana config file
+    template:
+        mode: "644"
+        src: grafana.ini.j2
+        dest: /home/{{ server_user }}/grafana.ini
+    become: true
+
+- name: Stop existing monitoring containers
+  shell: docker compose -f docker-compose-monitor.yml down
+  args:
+    chdir: /home/{{ server_user }}
+  become: true
+  ignore_errors: true
+
+- name: Start monitoring containers via docker compose
+  shell: docker compose -f docker-compose-monitor.yml up -d
+  args:
+    chdir: /home/{{ server_user }}
+  become: true
+
+- name: Wait for containers to start
+  pause:
+    seconds: 10
+
+- name: Verify monitoring stack is running
+  shell: docker compose -f docker-compose-monitor.yml ps --services --filter "status=running"
+  register: running_services
+  failed_when: running_services.stdout_lines | length < 4
