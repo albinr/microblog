@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Changed
+
+### Removed
+
+## [11.4.1] - 2025-12-11
+
+### Added
+
+- Added route for causing an error to test Prometheus Alertmanager
+
+### Fixed
+
 - Database connection issue (missing "cryptography" dependency)
 
 ### Changed
