@@ -3,14 +3,19 @@ Contains routes for main purpose of app
 """
 import os
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, current_app, jsonify
+from flask import render_template, flash, redirect, url_for, request, current_app, jsonify, abort
 from flask_login import current_user, login_required
 from app import db
 from app.main.forms import EditProfileForm, PostForm
 from app.models import User, Post
 from app.main import bp
+from prometheus_client import Counter
 
-
+TRIGGER_ERROR_COUNTER = Counter(
+    'myapp_trigger_error_total',
+    'Number of times the /trigger-error test endpoint was called',
+    ['status']
+)
 
 @bp.before_request
 def before_request():
@@ -133,3 +138,12 @@ def version():
     return jsonify({
         'version': app_version or 'unknown',
     })
+
+
+@bp.route("/trigger-error")
+def trigger_error():
+    try:
+        1/0
+    except:
+        TRIGGER_ERROR_COUNTER.labels(status="500").inc()
+        abort(500)
