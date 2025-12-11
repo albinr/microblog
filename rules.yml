@@ -1,11 +1,11 @@
 groups:
-  - name: More get requests than 25
+  - name: Test Error Endpoint Monitoring
     rules:
-      - alert: Between25And30GetRequests
-        expr: flask_http_request_total{method="GET",status="200"} > 25 and flask_http_request_total{method="GET",status="200"} < 30
-        for: 10s
-        # labels:
-        #   severity: warning
-        # annotations:
-        #   summary: "High GET request rate detected"
-        #   description: "The GET request rate is above 20 requests per second for more than 2 minutes."
+      - alert: TriggerErrorEndpoint
+        expr: increase(myapp_trigger_error_total{status="500"}[2m]) > 0
+        for: 0s
+        labels:
+          severity: warning
+        annotations:
+          description: "The test endpoint was used {{ $value }} times in the last 2m"
+          summary: "Test error endpoint /trigger-error was called"
