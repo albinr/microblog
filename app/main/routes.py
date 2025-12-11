@@ -5,11 +5,11 @@ import os
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, current_app, jsonify, abort
 from flask_login import current_user, login_required
+from prometheus_client import Counter
 from app import db
 from app.main.forms import EditProfileForm, PostForm
 from app.models import User, Post
 from app.main import bp
-from prometheus_client import Counter
 
 TRIGGER_ERROR_COUNTER = Counter(
     'myapp_trigger_error_total',
@@ -142,8 +142,11 @@ def version():
 
 @bp.route("/trigger-error")
 def trigger_error():
+    """
+    Route to trigger a test error for monitoring alerts
+    """
     try:
         1/0
-    except:
+    except ZeroDivisionError:
         TRIGGER_ERROR_COUNTER.labels(status="500").inc()
         abort(500)
