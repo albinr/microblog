@@ -11,4 +11,4 @@ python-dotenv==0.19.1
 sentry-sdk[flask]==2.46.0
 Werkzeug==3.0.3
 prometheus-flask-exporter==0.23.0
-cryptography==41.0.0
+cryptography==42.0.4
