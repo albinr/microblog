@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Database connection issue (missing "cryptography" dependency)
+
 ### Changed
 
 ### Removed
